@@ -1,21 +1,80 @@
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { register } from "../src/store/feauters/authSlice";
 
+export default function SignUpPage() {
+    const dispatch = useDispatch();
 
-export default function HomePage() {
+    const [form, setForm] = useState({
+        username: "",
+        email: "",
+        password: "",
+    });
+
+    const { loading, error } = useSelector((state) => state.auth);
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault(); // Prevent page refresh
+        console.log("in the handle submit")
+        dispatch(register({form}));
+    };
+
     return (
-        <div className="w-full h-full flex flex-col justify-center items-center text-3xl text-white">
-            <h1 className="mb-2">Welcome to the To-Do List App!</h1>
-            <p className="w-[50%] text-center text-[12px]">
-                This application helps you manage your tasks efficiently. You can add new tasks, view your current tasks, and delete tasks that you have completed. Stay organized and boost your productivity with this simple yet effective To-Do List App!
-            </p>
-            <div className=" w-full flex flex-col justify-center items-center  text-white">
-                <div className="m-8 mb-2 p-8 w-[500px] h-[200px] flex flex-col gap-4 justify-start items-center text-lg text-white">
-                    <input className="w-92 h-12 rounded-lg border-2 border-white" type="text" placeholder="Enter your Email or UserName"></input> 
-                    <input className="w-92 h-12 rounded-lg border-2 border-white" type="text" placeholder="Enter your Password"></input>
-                  
-                </div>
-                  <button className="w-[300px] bg-white text-2xl font-bold text-black p-2 rounded-xl  "  type="submit" >Login</button>
-                   <button className="w-[300px] mt-3 bg-white text-2xl font-bold text-black p-2 rounded-xl "type="submit">SignUp</button>
-            </div>
+        <div className="w-full h-screen flex flex-col justify-center items-center text-white">
+            <h1 className="text-3xl mb-4">Create an Account</h1>
+
+            <form
+                onSubmit={handleSubmit}
+                className="p-8 w-[400px] flex flex-col gap-4 bg-gray-800 rounded-xl"
+            >
+                <input
+                    className="h-12 rounded-lg border-2 border-white px-3 bg-transparent"
+                    type="text"
+                    name="username"
+                    placeholder="Enter Username"
+                    value={form.username}
+                    onChange={handleChange}
+                    required
+                />
+
+                <input
+                    className="h-12 rounded-lg border-2 border-white px-3 bg-transparent"
+                    type="email"
+                    name="email"
+                    placeholder="Enter Email"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                />
+
+                <input
+                    className="h-12 rounded-lg border-2 border-white px-3 bg-transparent"
+                    type="password"
+                    name="password"
+                    placeholder="Enter Password"
+                    value={form.password}
+                    onChange={handleChange}
+                    required
+                />
+
+                {error && (
+                    <p className="text-red-400 text-sm text-center">
+                        {error}
+                    </p>
+                )}
+
+                <button
+                    type="submit"
+                    className="w-full bg-white text-black font-bold text-xl p-2 rounded-xl"
+                    disabled={loading === "loading"}
+                >
+                    {loading === "loading" ? "Creating Account..." : "Sign Up"}
+                </button>
+            </form>
         </div>
     );
 }
