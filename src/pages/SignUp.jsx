@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../src/store/feauters/authSlice";
+import { register } from "../store/feauters/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUpPage() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [form, setForm] = useState({
         username: "",
@@ -13,14 +15,19 @@ export default function SignUpPage() {
 
     const { loading, error } = useSelector((state) => state.auth);
 
+    useEffect(() => {
+        if (loading === "success") {
+            navigate("/login");
+        }
+    }, [loading, navigate]);
+
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = (e) => {
-        e.preventDefault(); // Prevent page refresh
-        console.log("in the handle submit")
-        dispatch(register({form}));
+        e.preventDefault();
+        dispatch(register(form)); // FIXED
     };
 
     return (

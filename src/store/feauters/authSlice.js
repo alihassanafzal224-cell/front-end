@@ -2,27 +2,50 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 // Async thunk
 export const register = createAsyncThunk("auth/register", async (formData, { rejectWithValue }) => {
-    try {        
-      const res = await fetch("http://localhost:8000/api/register", {
+  try {
+    const res = await fetch("http://localhost:8000/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+      credentials: "include"  
+    });
+
+    if (!res.ok) {
+      return rejectWithValue("Failed to register");
+    }
+
+    const data = await res.json();
+    return data;
+
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+}
+);
+
+export const login = createAsyncThunk(
+  "auth/login",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const res = await fetch("http://localhost:8000/api/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData)
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+        credentials: "include"  
 
+      })
       if (!res.ok) {
-        return rejectWithValue("Failed to register");
+        return rejectWithValue("Invalid credentials");
       }
-
       const data = await res.json();
-      return data;
-
+       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.message)
     }
   }
-);
+)
 
 // Initial State
 const initialState = {
@@ -35,7 +58,14 @@ const initialState = {
 export const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logout:(state)=>{
+      state.user = null
+      state.loading = "idle"
+      state.error = null
+    },
+    },
+
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state) => {
@@ -44,14 +74,28 @@ export const authSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = "success";
-        state.user = action.payload;
+        state.user = null;
         state.error = null;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = "failed";
         state.error = action.payload;
-      });
+      })
+      .addCase(login.pending,(state)=>{
+        state.loading = "loading"
+        state.error = null
+      })
+      .addCase(login.fulfilled,(state,action)=>{
+        state.loading = "success"
+        state.user = action.payload
+        state.error = null
+      })
+      .addCase(login.rejected,(state,action)=>{
+        state.loading = "failed"
+        state.error = action.payload
+      })
   },
 });
 
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

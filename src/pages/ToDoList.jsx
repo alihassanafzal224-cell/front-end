@@ -3,8 +3,8 @@ import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
 import validator from "validator";
 import { useSelector,useDispatch } from "react-redux";
-import { decrement, increment } from "../src/store/feauters/CounterSlice";
-
+import { decrement, increment } from "../store/feauters/CounterSlice";
+import {logout} from "../store/feauters/authSlice"
 export default function ToDoList(/*{ value }*/) {
   const [formData, setFormData] = useState({
     name: "",
@@ -84,9 +84,9 @@ export default function ToDoList(/*{ value }*/) {
 
   // const { count, setcount, increment, decrement } = value;
   const count = useSelector((state) => state.counter.value )
-  const disispatch = useDispatch()
+  const dispatch = useDispatch()
 
-  const [tasks, setTasks] = useState([{ task: "Sample-Task", id: uuidv4() }]);
+  const [tasks, setTasks] = useState([]);
   const [newTodo, setNewTodo] = useState("");
 
   function addNewTask() {
@@ -102,19 +102,29 @@ export default function ToDoList(/*{ value }*/) {
     setTasks((prev) => [...prev, { task: newTodo, id: uuidv4() }]);
     setNewTodo("");
     // increment();
-    disispatch(increment())
+    dispatch(increment())
   }
 
   function deleteTask(id) {
     setTasks((prev) => prev.filter((task) => task.id !== id));
     // decrement();
     if(!count == 0)
-    disispatch(decrement())
+    dispatch(decrement())
+  }
+  const handleout =()=>{
+    dispatch(logout())
   }
 
   return (
     <div className="mt-12 w-full h-full flex flex-col justify-center items-center text-lg text-white">
-
+   <div className="m-7 h-15 flex justify-around items-center w-full bg-white">
+    <p className="text-black text-2xl">Welcome to To Do List</p>
+      <button
+          className="w-25 h-12 bg-black text-white p-2 rounded-xl cursor-pointer"
+          onClick={handleout}
+        >
+          Logout
+        </button> </div>
       {/* Todo Input */}
       <div>
         <input
@@ -132,6 +142,7 @@ export default function ToDoList(/*{ value }*/) {
           Add Task
         </button>
       </div>
+      
 
       {/* Todo List */}
       <div className="flex flex-col justify-center mb-10 items-center text-lg 

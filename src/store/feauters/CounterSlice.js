@@ -1,28 +1,15 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
-
+const initialState = { value: 0 };
 
 export const counterSlice = createSlice({
-    name: 'counter',
-    initialState: {
-        value: 0,
-        data: null,
-        loadingData: "idle",   // "loading", "failed"
-        errorData: null,
-    },
-    reducers: {
-        increment: (state) => {
-            state.value += 1;
-        }
-        ,
-        decrement: (state) => {
-            state.value -= 1;
-        }
-    },
-    extraReducers: ((builder)=>{
-        builder.addCase()
-    })
+  name: "counter",
+  initialState,
+  reducers: {
+    increment: (state) => { state.value += 1; },
+    decrement: (state) => { state.value -= 1; },
+  },
 });
-export const {increment, decrement} = counterSlice.actions;
-export default counterSlice.reducer;
 
+export const { increment, decrement } = counterSlice.actions;
+export default counterSlice.reducer;
